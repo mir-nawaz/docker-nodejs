@@ -2,11 +2,14 @@
 
 const express = require('express');
 const app = express();
+const log = require ('./log.js');
 
 app.get('/', function (req, res) {
-  res.send('Hello World!')
+  log.info('Hello World!' +process.pid);
+  res.send('Hello World! '+process.pid)
 });
 
-app.listen(8081, function () {
-  console.log('app listening on port 8081!')
+app.listen(3000, function () {
+  log.info('app listening on port 3000!');
+  console.log('app listening on port 3000!');
 });
