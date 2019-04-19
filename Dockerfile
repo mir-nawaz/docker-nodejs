@@ -13,9 +13,7 @@ WORKDIR /usr/src/app/
 COPY . .
 RUN npm install
 
-
-# expose container port
-
 CMD npm start
 
+# expose container port
 EXPOSE 3000

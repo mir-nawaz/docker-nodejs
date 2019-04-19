@@ -1,4 +1,4 @@
-# Run a Node.js app in Docker in 5-minutes
+# Run a Node.js app in Docker and kubernetes
 
 ## Overview
 
@@ -14,7 +14,7 @@ For this demo to work, [Docker](http://docker.com) and [Node.js](http://nodejs.o
 $ mkdir hello-world
 $ cd hello-world
 $ npm init
-$ npm install —save express
+$ npm install —save express simple-node-logger
 ```
 
 ### 2. Create an index.js for our app code.
@@ -26,16 +26,21 @@ $ touch index.js
 ### 3. Open a code editor and add some code for a simple hello world app.
 
 ```javascript
-var express = require('express')
-var app = express()
+'use strict';
+
+const express = require('express');
+const app = express();
+const log = require ('./log.js');
 
 app.get('/', function (req, res) {
-  res.send('Hello World!')
-})
+  log.info('Hello World!' +process.pid);
+  res.send('Hello World! '+process.pid)
+});
 
-app.listen(8081, function () {
-  console.log('app listening on port 8081!')
-})
+app.listen(3000, function () {
+  log.info('app listening on port 3000!');
+  console.log('app listening on port 3000!');
+});
 ```
 
 ### 4. Note that the Node code is using port 8081. Then, run the app in Node and open it in a browser.
@@ -58,13 +63,25 @@ Note: you can also just create a file from your code editor. The Dockerfile is j
 ### 6. Add instructions for Docker into the Dockerfile
 
 ```bash
-FROM node:7
-WORKDIR /app
-COPY package.json /app
+# install latest node
+# https://hub.docker.com/_/node/
+FROM node:latest
+
+# create and set app directory
+RUN mkdir -p /usr/src/app/
+WORKDIR /usr/src/app/
+
+# install app dependencies
+# this is done before the following COPY command to take advantage of layer caching
+
+# copy app source to destination container
+COPY . .
 RUN npm install
-COPY . /app
-CMD node index.js
-EXPOSE 8082
+
+CMD npm start
+
+# expose container port
+EXPOSE 3000
 ```
 
 The first line tells Docker to use another Docker image as a template for the image that we’re creating.
@@ -138,17 +155,30 @@ $ docker rm your-container-id
 $ docker rmi hello-world
 ```
 
-### 4. Docker attach bash
+### 5. Docker attach bash
 
 ```bash
 $ docker exec -it <container-id> bash
 ```
 
-### 4. Docker logs
+### 6. Docker logs
 
 ```bash
 $ docker logs --tail <lines> -f <container-id>
 ```
 
+### 7. kubernetes commands
+
+```bash
+docker build -t hello-node .
+docker tag <image-id> mirnawaz/hello-node:2.0
+docker push mirnawaz/hello-node:2.1
+kubectl apply -f deploy-pv.yml
+kubectl get PersistentVolumeClaim
+kubectl get PersistentVolume
+kubectl apply -f deploy.yml
+kubectl expose deployment hello-app --type=LoadBalancer --port=8080 --target-port=3000 --external-ip=192.168.56.112
+kubectl scale --replicas 3 deployment/hello-app
+```
 
 ## That's all folks!
