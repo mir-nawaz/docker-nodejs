@@ -2,7 +2,7 @@
 
 ## Overview
 
-This video shows how to get a Node.js app running inside a Docker container on a local computer.
+This repository shows how to get a Node.js app running inside a Docker container on a local computer.
 
 For this demo to work, [Docker](http://docker.com) and [Node.js](http://nodejs.org) need to be installed.
 
@@ -43,13 +43,13 @@ app.listen(3000, function () {
 });
 ```
 
-### 4. Note that the Node code is using port 8081. Then, run the app in Node and open it in a browser.
+### 4. Note that the Node code is using port 3000. Then, run the app in Node and open it in a browser.
 
 ```bash
 $ node index.js
 ```
 
-Node should tell you the app is running on port 8081. Test the app by opening http://localhost:8081.
+Node should tell you the app is running on port 3000. Test the app by opening http://localhost:3000.
 
 If you see "Hello World" all is good.
 
@@ -86,7 +86,7 @@ EXPOSE 3000
 
 The first line tells Docker to use another Docker image as a template for the image that we’re creating.
 
-We’re using is the official Docker image for Node.js and it’s version 7 of that image.
+We’re using is the official Docker image for Node.js and it’s latest version image.
 
 The second line, sets a working directory for where the app code will live inside the Docker container.
 
@@ -94,9 +94,9 @@ On lines 3, 4, and 5 we’re telling Docker to copy our local files into the con
 
 On line 6, we tell docker to execute our app inside the container by using node to run our index.js file.
 
-Last, on line 7, we setup the port that Docker will expose when the container is running. Port 8082 in our case.
+Last, on line 7, we setup the port that Docker will expose when the container is running. Port 3000 in our case.
 
-NOTE: The Node.js app is using port 8081 but it will be using that port inside the Docker container when the container is running.
+NOTE: The Node.js app is using port 3000 but it will be using that port inside the Docker container when the container is running.
 
 ### 7. Build a Docker image
 
@@ -116,15 +116,15 @@ To do that, we use the docker run command with the name of the image we want to 
 
 We’ll also provide the dash ‘p’ parameter with the run command to map the ports that our Docker container and Node app will be using.
 
-Remember, in our Dockerfile we exposed port 8082 but in our code, Node is using port 8081.
+Remember, in our Dockerfile we exposed port 3000 and also in our code, Node is using port 3000.
 
 So, the run command will look like this.
 
 ```bash
-$ docker run -p 8082:8081 hello-world
+$ docker run -p 3001:3000 hello-world
 ```
 
-When you run that command Docker will show you the respone from Node saying the app is running on port 8081. However, that's inside the container. So to see the app running on your localhost you'll need to open port 8082 - the port Docker is exposing. So, http://localhost:8082
+When you run that command Docker will show you the respone from Node saying the app is running on port 3000. However, that's inside the container. So to see the app running on your localhost you'll need to open port 3001 - the port Docker is exposing. So, http://localhost:3001
 
 That's it! Your Node.js app is running in Docker.
 
